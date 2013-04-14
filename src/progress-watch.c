@@ -69,6 +69,20 @@ void bars_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
   graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
 
+  //Month
+  float month;
+  int month_percent;
+  int isLeapYear = (t.tm_year%4 == 0)?1:0;
+  int daysInMonth = (t.tm_mon + 1 == 2) ? (28 + isLeapYear) : 31 - ((t.tm_mon) % 7 % 2);
+  
+  month = t.tm_mday;
+  month = ((double)100/daysInMonth)*month; //Percent of year
+  month = ((double)134/100)*month; //Percent of bar based on % of year
+  month_percent = (int)month;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 56, month_percent, 5), 0, GCornerNone);
+
   //Week
   float week;
   int week_percent;
