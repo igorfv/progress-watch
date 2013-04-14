@@ -101,9 +101,22 @@ void handle_init(AppContextRef ctx) {
 }
 
 
+void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
+
+  (void)ctx;
+
+}
+
+
 void pbl_main(void *params) {
   PebbleAppHandlers handlers = {
-    .init_handler = &handle_init
+    .init_handler = &handle_init,
+
+    .tick_info = {
+      .tick_handler = &handle_minute_tick,
+      .tick_units = MINUTE_UNIT
+    }
+
   };
   app_event_loop(params, &handlers);
 }
