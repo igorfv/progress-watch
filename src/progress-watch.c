@@ -52,6 +52,23 @@ void bars_update_callback(Layer *me, GContext* ctx) {
     graphics_draw_line(ctx, GPoint(4, 118),     GPoint(4, 118+4));
     graphics_draw_line(ctx, GPoint(144-6, 118), GPoint(144-6, 118+4));
 
+
+  //Progress bars
+  PblTm t;
+  get_time(&t);
+
+  float year;
+  int year_percent;
+
+  //Year
+  year = t.tm_yday;
+  year = ((double)100/366)*year; //Percent of year
+  year = ((double)134/100)*year; //Percent of bar based on % of year
+  year_percent = (int)year;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
+
 }
 
 
@@ -61,7 +78,6 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Window Name");
   window_stack_push(&window, true /* Animated */);
   window_set_background_color(&window, GColorBlack);
-
 
   //Texts
     //Year
@@ -96,7 +112,6 @@ void handle_init(AppContextRef ctx) {
     text_layer_set_text(&day_layer, "Day");
     layer_add_child(&window.layer, &day_layer.layer);
 
-
   //Clock text
   text_layer_init(&text_time_layer, GRect(0, 127, 144, 127+26));
   text_layer_set_text_color(&text_time_layer, GColorWhite);
@@ -119,6 +134,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   static char time_text[] = "00:00";
   char *time_format;
 
+  layer_mark_dirty(&main_layer);
 
   //Time
   if (clock_is_24h_style()) {
