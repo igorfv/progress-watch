@@ -69,7 +69,6 @@ void progress_update_callback(Layer *me, GContext* ctx) {
   year = t.tm_yday;
   year = ((double)100/366)*year; //Percent of year
 
-
   //Month
   float month;
   int month_percent;
@@ -81,17 +80,22 @@ void progress_update_callback(Layer *me, GContext* ctx) {
 
   //Week
   float week;
+  int hour; 
   int week_percent;
   
   week = t.tm_wday;
-  week = ((double)100/6)*week; //Percent of Week
+  week = week*24 + t.tm_hour;
+  week = ((double)100/(7*24))*week; //Percent of Week
 
   //Day
   float day;
   int day_percent;
   
   day = t.tm_hour;
-  day = ((double)100/23)*day; //Percent of year
+  day = day*60 + t.tm_min;
+  day = ((double)100/(24*60))*day; //Percent of year
+
+
 
 
   //% of progress bar
