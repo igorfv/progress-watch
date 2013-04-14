@@ -53,6 +53,7 @@ void handle_init(AppContextRef ctx) {
 
   window_init(&window, "Window Name");
   window_stack_push(&window, true /* Animated */);
+  window_set_background_color(&window, GColorBlack);
 }
 
 
