@@ -12,10 +12,15 @@ PBL_APP_INFO(MY_UUID,
 
 Window window;
 
+TextLayer year_layer;
+TextLayer month_layer;
+TextLayer week_layer;
+TextLayer day_layer;
+
 Layer main_layer;
 
 
-void text_n_bars_update_callback(Layer *me, GContext* ctx) {
+void bars_update_callback(Layer *me, GContext* ctx) {
   (void)me;
 
   graphics_context_set_stroke_color(ctx, GColorWhite);
@@ -56,8 +61,42 @@ void handle_init(AppContextRef ctx) {
   window_set_background_color(&window, GColorBlack);
 
 
+  //Texts
+    //Year
+    text_layer_init(&year_layer, GRect(8, 7, 144-16, 7+12));
+    text_layer_set_text_color(&year_layer, GColorWhite);
+    text_layer_set_background_color(&year_layer, GColorClear);
+    text_layer_set_font(&year_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(&year_layer, "Year");
+    layer_add_child(&window.layer, &year_layer.layer);
+
+    //Month
+    text_layer_init(&month_layer, GRect(8, 38, 144-16, 38+12));
+    text_layer_set_text_color(&month_layer, GColorWhite);
+    text_layer_set_background_color(&month_layer, GColorClear);
+    text_layer_set_font(&month_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(&month_layer, "Month");
+    layer_add_child(&window.layer, &month_layer.layer);
+
+    //Week
+    text_layer_init(&week_layer, GRect(8, 69, 144-16, 69+12));
+    text_layer_set_text_color(&week_layer, GColorWhite);
+    text_layer_set_background_color(&week_layer, GColorClear);
+    text_layer_set_font(&week_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(&week_layer, "Week");
+    layer_add_child(&window.layer, &week_layer.layer);
+
+    //Day
+    text_layer_init(&day_layer, GRect(8, 100, 144-16, 100+12));
+    text_layer_set_text_color(&day_layer, GColorWhite);
+    text_layer_set_background_color(&day_layer, GColorClear);
+    text_layer_set_font(&day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(&day_layer, "Day");
+    layer_add_child(&window.layer, &day_layer.layer);
+
+
   layer_init(&main_layer, window.layer.frame);
-  main_layer.update_proc = &text_n_bars_update_callback;
+  main_layer.update_proc = &bars_update_callback;
   layer_add_child(&window.layer, &main_layer);
 }
 
