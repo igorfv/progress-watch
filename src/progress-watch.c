@@ -19,6 +19,7 @@ TextLayer day_layer;
 
 TextLayer text_time_layer;
 
+Layer bars_layer;
 Layer main_layer;
 
 
@@ -27,32 +28,35 @@ void bars_update_callback(Layer *me, GContext* ctx) {
 
   graphics_context_set_stroke_color(ctx, GColorWhite);
 
-  //Bars
-    //Year
-    graphics_draw_line(ctx, GPoint(5, 24),      GPoint(144-7, 24));
-    graphics_draw_line(ctx, GPoint(5, 24+6),    GPoint(144-7, 24+6));
-    graphics_draw_line(ctx, GPoint(4, 25),      GPoint(4, 25+4));
-    graphics_draw_line(ctx, GPoint(144-6, 25),  GPoint(144-6, 25+4));
+  //Year
+  graphics_draw_line(ctx, GPoint(5, 24),      GPoint(144-7, 24));
+  graphics_draw_line(ctx, GPoint(5, 24+6),    GPoint(144-7, 24+6));
+  graphics_draw_line(ctx, GPoint(4, 25),      GPoint(4, 25+4));
+  graphics_draw_line(ctx, GPoint(144-6, 25),  GPoint(144-6, 25+4));
 
-    //Month
-    graphics_draw_line(ctx, GPoint(5, 55),      GPoint(144-7, 55));
-    graphics_draw_line(ctx, GPoint(5, 55+6),    GPoint(144-7, 55+6));
-    graphics_draw_line(ctx, GPoint(4, 56),      GPoint(4, 56+4));
-    graphics_draw_line(ctx, GPoint(144-6, 56),  GPoint(144-6, 56+4));
+  //Month
+  graphics_draw_line(ctx, GPoint(5, 55),      GPoint(144-7, 55));
+  graphics_draw_line(ctx, GPoint(5, 55+6),    GPoint(144-7, 55+6));
+  graphics_draw_line(ctx, GPoint(4, 56),      GPoint(4, 56+4));
+  graphics_draw_line(ctx, GPoint(144-6, 56),  GPoint(144-6, 56+4));
 
-    //Week
-    graphics_draw_line(ctx, GPoint(5, 86),      GPoint(144-7, 86));
-    graphics_draw_line(ctx, GPoint(5, 86+6),    GPoint(144-7, 86+6));
-    graphics_draw_line(ctx, GPoint(4, 87),      GPoint(4, 87+4));
-    graphics_draw_line(ctx, GPoint(144-6, 87),  GPoint(144-6, 87+4));
+  //Week
+  graphics_draw_line(ctx, GPoint(5, 86),      GPoint(144-7, 86));
+  graphics_draw_line(ctx, GPoint(5, 86+6),    GPoint(144-7, 86+6));
+  graphics_draw_line(ctx, GPoint(4, 87),      GPoint(4, 87+4));
+  graphics_draw_line(ctx, GPoint(144-6, 87),  GPoint(144-6, 87+4));
 
-    //Day
-    graphics_draw_line(ctx, GPoint(5, 117),     GPoint(144-7, 117));
-    graphics_draw_line(ctx, GPoint(5, 117+6),   GPoint(144-7, 117+6));
-    graphics_draw_line(ctx, GPoint(4, 118),     GPoint(4, 118+4));
-    graphics_draw_line(ctx, GPoint(144-6, 118), GPoint(144-6, 118+4));
+  //Day
+  graphics_draw_line(ctx, GPoint(5, 117),     GPoint(144-7, 117));
+  graphics_draw_line(ctx, GPoint(5, 117+6),   GPoint(144-7, 117+6));
+  graphics_draw_line(ctx, GPoint(4, 118),     GPoint(4, 118+4));
+  graphics_draw_line(ctx, GPoint(144-6, 118), GPoint(144-6, 118+4));
+}
 
+void progress_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
 
+  graphics_context_set_stroke_color(ctx, GColorWhite);
   //Progress bars
   PblTm t;
   get_time(&t);
@@ -159,8 +163,12 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window.layer, &text_time_layer.layer);
 
 
+  layer_init(&bars_layer, window.layer.frame);
+  bars_layer.update_proc = &bars_update_callback;
+  layer_add_child(&window.layer, &bars_layer);
+
   layer_init(&main_layer, window.layer.frame);
-  main_layer.update_proc = &bars_update_callback;
+  main_layer.update_proc = &progress_update_callback;
   layer_add_child(&window.layer, &main_layer);
 }
 
@@ -170,8 +178,6 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   static char time_text[] = "00:00";
   char *time_format;
-
-  layer_mark_dirty(&main_layer);
 
   //Time
   if (clock_is_24h_style()) {
@@ -188,6 +194,8 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   text_layer_set_text(&text_time_layer, time_text);
 
+  //Redraw layer
+  layer_mark_dirty(&main_layer);
 }
 
 
