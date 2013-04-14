@@ -57,10 +57,10 @@ void bars_update_callback(Layer *me, GContext* ctx) {
   PblTm t;
   get_time(&t);
 
+  //Year
   float year;
   int year_percent;
-
-  //Year
+  
   year = t.tm_yday;
   year = ((double)100/366)*year; //Percent of year
   year = ((double)134/100)*year; //Percent of bar based on % of year
@@ -80,6 +80,18 @@ void bars_update_callback(Layer *me, GContext* ctx) {
 
   graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
   graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 87, week_percent, 5), 0, GCornerNone);
+
+  //Day
+  float day;
+  int day_percent;
+  
+  day = t.tm_hour;
+  day = ((double)100/23)*day; //Percent of year
+  day = ((double)134/100)*day; //Percent of bar based on % of year
+  day_percent = (int)day;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 118, day_percent, 5), 0, GCornerNone);
 }
 
 
