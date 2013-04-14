@@ -61,17 +61,14 @@ void progress_update_callback(Layer *me, GContext* ctx) {
   PblTm t;
   get_time(&t);
 
+  //% of date
   //Year
   float year;
   int year_percent;
   
   year = t.tm_yday;
   year = ((double)100/366)*year; //Percent of year
-  year = ((double)134/100)*year; //Percent of bar based on % of year
-  year_percent = (int)year;
 
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
 
   //Month
   float month;
@@ -80,24 +77,14 @@ void progress_update_callback(Layer *me, GContext* ctx) {
   int daysInMonth = (t.tm_mon + 1 == 2) ? (28 + isLeapYear) : 31 - ((t.tm_mon) % 7 % 2);
   
   month = t.tm_mday;
-  month = ((double)100/daysInMonth)*month; //Percent of year
-  month = ((double)134/100)*month; //Percent of bar based on % of year
-  month_percent = (int)month;
-
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 56, month_percent, 5), 0, GCornerNone);
+  month = ((double)100/daysInMonth)*month; //Percent of month
 
   //Week
   float week;
   int week_percent;
   
   week = t.tm_wday;
-  week = ((double)100/6)*week; //Percent of year
-  week = ((double)134/100)*week; //Percent of bar based on % of year
-  week_percent = (int)week;
-
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 87, week_percent, 5), 0, GCornerNone);
+  week = ((double)100/6)*week; //Percent of Week
 
   //Day
   float day;
@@ -105,6 +92,31 @@ void progress_update_callback(Layer *me, GContext* ctx) {
   
   day = t.tm_hour;
   day = ((double)100/23)*day; //Percent of year
+
+
+  //% of progress bar
+  //Year
+  year = ((double)134/100)*year; //Percent of bar based on % of year
+  year_percent = (int)year;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
+
+  //Month
+  month = ((double)134/100)*month; //Percent of bar based on % of month
+  month_percent = (int)month;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 56, month_percent, 5), 0, GCornerNone);
+
+  //Week
+  week = ((double)134/100)*week; //Percent of bar based on % of year
+  week_percent = (int)week;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 87, week_percent, 5), 0, GCornerNone);
+
+  //Day
   day = ((double)134/100)*day; //Percent of bar based on % of year
   day_percent = (int)day;
 
