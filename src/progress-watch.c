@@ -5,7 +5,7 @@
 
 #define MY_UUID {0x80, 0xF3, 0x5F, 0x1D, 0x94, 0xAD, 0x46, 0x68, 0xA4, 0x66, 0x06, 0x27, 0xA5, 0x18, 0xC1, 0x69}
 PBL_APP_INFO(MY_UUID,
-             "Progress Watch", "Igor Vieira",
+             "Progress Watch Alternative", "Igor Vieira",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
