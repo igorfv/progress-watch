@@ -12,6 +12,41 @@ PBL_APP_INFO(MY_UUID,
 
 Window window;
 
+Layer main_layer;
+
+
+void text_n_bars_update_callback(Layer *me, GContext* ctx) {
+  (void)me;
+
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+
+  //Bars
+    //Year
+    graphics_draw_line(ctx, GPoint(5, 24),      GPoint(144-7, 24));
+    graphics_draw_line(ctx, GPoint(5, 24+6),    GPoint(144-7, 24+6));
+    graphics_draw_line(ctx, GPoint(4, 25),      GPoint(4, 25+4));
+    graphics_draw_line(ctx, GPoint(144-6, 25),  GPoint(144-6, 25+4));
+
+    //Month
+    graphics_draw_line(ctx, GPoint(5, 55),      GPoint(144-7, 55));
+    graphics_draw_line(ctx, GPoint(5, 55+6),    GPoint(144-7, 55+6));
+    graphics_draw_line(ctx, GPoint(4, 56),      GPoint(4, 56+4));
+    graphics_draw_line(ctx, GPoint(144-6, 56),  GPoint(144-6, 56+4));
+
+    //Week
+    graphics_draw_line(ctx, GPoint(5, 86),      GPoint(144-7, 86));
+    graphics_draw_line(ctx, GPoint(5, 86+6),    GPoint(144-7, 86+6));
+    graphics_draw_line(ctx, GPoint(4, 87),      GPoint(4, 87+4));
+    graphics_draw_line(ctx, GPoint(144-6, 87),  GPoint(144-6, 87+4));
+
+    //Day
+    graphics_draw_line(ctx, GPoint(5, 117),     GPoint(144-7, 117));
+    graphics_draw_line(ctx, GPoint(5, 117+6),   GPoint(144-7, 117+6));
+    graphics_draw_line(ctx, GPoint(4, 118),     GPoint(4, 118+4));
+    graphics_draw_line(ctx, GPoint(144-6, 118), GPoint(144-6, 118+4));
+
+}
+
 
 void handle_init(AppContextRef ctx) {
   (void)ctx;
