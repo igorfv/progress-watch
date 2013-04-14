@@ -114,8 +114,26 @@ void handle_init(AppContextRef ctx) {
 
 
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
-
   (void)ctx;
+
+  static char time_text[] = "00:00";
+  char *time_format;
+
+
+  //Time
+  if (clock_is_24h_style()) {
+    time_format = "%R";
+  } else {
+    time_format = "%I:%M";
+  }
+
+  string_format_time(time_text, sizeof(time_text), time_format, t->tick_time);
+
+  if (!clock_is_24h_style() && (time_text[0] == '0')) {
+    memmove(time_text, &time_text[1], sizeof(time_text) - 1);
+  }
+
+  text_layer_set_text(&text_time_layer, time_text);
 
 }
 
