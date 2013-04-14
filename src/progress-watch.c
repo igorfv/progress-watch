@@ -5,7 +5,7 @@
 
 #define MY_UUID { 0xCC, 0xC3, 0x0B, 0xBD, 0x4A, 0xF6, 0x45, 0xA7, 0x91, 0x86, 0x2E, 0xDA, 0x37, 0x29, 0xCF, 0xE2 }
 PBL_APP_INFO(MY_UUID,
-             "Template App", "Your Company",
+             "Progress Watch", "Igor Vieira",
              1, 0, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
