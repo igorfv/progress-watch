@@ -17,6 +17,8 @@ TextLayer month_layer;
 TextLayer week_layer;
 TextLayer day_layer;
 
+TextLayer text_time_layer;
+
 Layer main_layer;
 
 
@@ -93,6 +95,16 @@ void handle_init(AppContextRef ctx) {
     text_layer_set_font(&day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
     text_layer_set_text(&day_layer, "Day");
     layer_add_child(&window.layer, &day_layer.layer);
+
+
+  //Clock text
+  text_layer_init(&text_time_layer, GRect(0, 127, 144, 127+26));
+  text_layer_set_text_color(&text_time_layer, GColorWhite);
+  text_layer_set_background_color(&text_time_layer, GColorClear);
+  text_layer_set_font(&text_time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_text_alignment(&text_time_layer, GTextAlignmentCenter);
+  text_layer_set_text(&text_time_layer, "00:00");
+  layer_add_child(&window.layer, &text_time_layer.layer);
 
 
   layer_init(&main_layer, window.layer.frame);
