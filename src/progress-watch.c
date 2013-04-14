@@ -69,6 +69,17 @@ void bars_update_callback(Layer *me, GContext* ctx) {
   graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
   graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
 
+  //Week
+  float week;
+  int week_percent;
+  
+  week = t.tm_wday;
+  week = ((double)100/6)*week; //Percent of year
+  week = ((double)134/100)*week; //Percent of bar based on % of year
+  week_percent = (int)week;
+
+  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
+  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 87, week_percent, 5), 0, GCornerNone);
 }
 
 
