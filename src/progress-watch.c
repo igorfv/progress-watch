@@ -192,10 +192,33 @@ void handle_init(AppContextRef ctx) {
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)ctx;
 
+  //Year
+  static char date_year[] = "Year (0000)";
+  string_format_time(date_year, sizeof(date_year), "Year (%Y)", t->tick_time);
+  text_layer_set_text(&year_layer, date_year);
+
+  //Month
+  static char date_month[] = "Month (Xxxxxxxxxxx)";
+  string_format_time(date_month, sizeof(date_month), "Month (%B)", t->tick_time);
+  text_layer_set_text(&month_layer, date_month);
+
+  //Week
+  static char date_week[] = "Week (Xxx)";
+  string_format_time(date_week, sizeof(date_week), "Week (%U)", t->tick_time);
+  text_layer_set_text(&week_layer, date_week);
+
+  //Day
+  static char date_day[] = "Day (Xxx, 00)";
+  string_format_time(date_day, sizeof(date_day), "Day (%a, %d)", t->tick_time);
+  text_layer_set_text(&day_layer, date_day);
+
+
+
+
+  //Time
   static char time_text[] = "00:00";
   char *time_format;
 
-  //Time
   if (clock_is_24h_style()) {
     time_format = "%R";
   } else {
