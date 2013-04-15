@@ -2,7 +2,7 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
-#include "itoa.h"
+// #include "itoa.h"
 
 #define MY_UUID {0x80, 0xF3, 0x5F, 0x1D, 0x94, 0xAD, 0x46, 0x68, 0xA4, 0x66, 0x06, 0x27, 0xA5, 0x18, 0xC1, 0x69}
 PBL_APP_INFO(MY_UUID,
@@ -203,27 +203,34 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   text_layer_set_text(&month_layer, date_month);
 
   //Week
-  static char date_week[] = "Week (Xxx)";
-  static char week_buff[] = "00000";
-  int week_tmp;
-  string_format_time(date_week, sizeof(date_week), "%U", t->tick_time);
-  week_tmp = atoi(date_week);
-  week_tmp++;
-  week_buff = itoa(week_tmp);
+  // static char date_week[] = "Week (Xxx)";
+  // static char week_buff[] = "00000";
+  // int week_tmp;
 
-  strcpy(date_week, "Week (");
-  if(week_tmp > 10)
-  {
-    strcat(date_week, "0");
-  }
-  strcat(date_week, week_buff);
-  strcat(date_week, ")");
+  // string_format_time(date_week, sizeof(date_week), "%U", t->tick_time);
 
+  // week_tmp = atoi(date_week);
+  // week_tmp++;
+  // itoa(week_tmp, week_buff, 10);
+
+  // strcpy(date_week, "Week (");
+  // if(week_tmp < 10)
+  // {
+  //   strcat(date_week, "0");
+  // }
+  // strcat(date_week, week_buff);
+  // strcat(date_week, ")");
+
+  // text_layer_set_text(&week_layer, date_week);
+
+  static char date_week[] = "Week (Xxxxxxxxx)";
+  string_format_time(date_week, sizeof(date_week), "Week (%A)", t->tick_time);
   text_layer_set_text(&week_layer, date_week);
 
+
   //Day
-  static char date_day[] = "Day (Xxx, 00)";
-  string_format_time(date_day, sizeof(date_day), "Day (%a, %d)", t->tick_time);
+  static char date_day[] = "Day (00)";
+  string_format_time(date_day, sizeof(date_day), "Day (%d)", t->tick_time);
   text_layer_set_text(&day_layer, date_day);
 
 
