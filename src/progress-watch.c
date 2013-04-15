@@ -2,6 +2,7 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
+#include "itoa.h"
 
 #define MY_UUID {0x80, 0xF3, 0x5F, 0x1D, 0x94, 0xAD, 0x46, 0x68, 0xA4, 0x66, 0x06, 0x27, 0xA5, 0x18, 0xC1, 0x69}
 PBL_APP_INFO(MY_UUID,
@@ -80,7 +81,6 @@ void progress_update_callback(Layer *me, GContext* ctx) {
 
   //Week
   float week;
-  int hour; 
   int week_percent;
   
   week = t.tm_wday;
@@ -204,7 +204,21 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   //Week
   static char date_week[] = "Week (Xxx)";
-  string_format_time(date_week, sizeof(date_week), "Week (%U)", t->tick_time);
+  static char week_buff[] = "00000";
+  int week_tmp;
+  string_format_time(date_week, sizeof(date_week), "%U", t->tick_time);
+  week_tmp = atoi(date_week);
+  week_tmp++;
+  week_buff = itoa(week_tmp);
+
+  strcpy(date_week, "Week (");
+  if(week_tmp > 10)
+  {
+    strcat(date_week, "0");
+  }
+  strcat(date_week, week_buff);
+  strcat(date_week, ")");
+
   text_layer_set_text(&week_layer, date_week);
 
   //Day
