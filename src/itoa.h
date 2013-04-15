@@ -1,2 +1,1 @@
-void itoa1(int i, char* a);
-void itoa2(int i, char* a);
+void itoa(int value, char* str, int base);

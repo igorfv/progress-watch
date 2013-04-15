@@ -2,21 +2,31 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
-void itoa1(int num, char* buffer) {
-    const char digits[10] = "0123456789";
-    buffer[0] = digits[num % 10];
+/**
+ * Ansi C "itoa" based on Kernighan & Ritchie's "Ansi C":
+ */
+void strreverse(char* begin, char* end) {
+  char aux;
+  while(end>begin)
+    aux=*end, *end--=*begin, *begin++=aux;
 }
+  
+void itoa(int value, char* str, int base) {
+  static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  char* wstr=str;
+  int sign;
 
-void itoa2(int num, char* buffer) {
-    const char digits[10] = "0123456789";
-    if(num > 99) {
-        buffer[0] = '9';
-        buffer[1] = '9';
-        return;
-    } else if(num > 9) {
-        buffer[0] = digits[num / 10];
-    } else {
-        buffer[0] = '0';
-    }
-    buffer[1] = digits[num % 10];
+  // Validate base
+  if (base<2 || base>35){ *wstr='\0'; return; }
+  
+  // Take care of sign  
+  if ((sign=value) < 0) value = -value;
+
+  // Conversion. Number is reversed.
+  do *wstr++ = num[value%base]; while(value/=base);
+  if(sign<0) *wstr++='-';
+  *wstr='\0';
+
+  // Reverse string
+  strreverse(str,wstr-1); 
 }
