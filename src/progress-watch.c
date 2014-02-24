@@ -1,27 +1,19 @@
-#include "pebble_os.h"
-#include "pebble_app.h"
-#include "pebble_fonts.h"
+#include <pebble.h>
 
 
-#define MY_UUID {0x5C, 0x47, 0x37, 0xAD, 0x4F, 0x68, 0x45, 0x8D, 0xA4, 0x30, 0x7E, 0x10, 0xEE, 0x07, 0x10, 0x80}
-PBL_APP_INFO(MY_UUID,
-             "Progress Watch", "Igor Vieira",
-             1, 0, /* App version */
-             RESOURCE_ID_IMAGE_MENU_ICON,
-             APP_INFO_WATCH_FACE);
 
-Window window;
+Window* window;
 
-TextLayer year_layer;
-TextLayer month_layer;
-TextLayer week_layer;
-TextLayer day_layer;
+TextLayer *year_layer;
+TextLayer *month_layer;
+TextLayer *week_layer;
+TextLayer *day_layer;
+static struct tm *tn;
+TextLayer *text_time_layer;
 
-TextLayer text_time_layer;
-
-Layer bars_layer;
-Layer main_layer;
-
+Layer *bars_layer;
+Layer *main_layer;
+Layer *window_layer;
 
 void bars_update_callback(Layer *me, GContext* ctx) {
   (void)me;
@@ -53,49 +45,47 @@ void bars_update_callback(Layer *me, GContext* ctx) {
   graphics_draw_line(ctx, GPoint(144-6, 118), GPoint(144-6, 118+4));
 }
 
+
 void progress_update_callback(Layer *me, GContext* ctx) {
   (void)me;
-
+time_t now = time(NULL);
+	tn = localtime(&now);
   graphics_context_set_stroke_color(ctx, GColorWhite);
   //Progress bars
-  PblTm t;
-  get_time(&t);
 
   //% of date
   //Year
   float year;
   int year_percent;
   
-  year = t.tm_yday;
+  year = tn->tm_yday;
   year = ((double)100/366)*year; //Percent of year
 
   //Month
   float month;
   int month_percent;
-  int isLeapYear = (t.tm_year%4 == 0)?1:0;
-  int daysInMonth = (t.tm_mon + 1 == 2) ? (28 + isLeapYear) : 31 - ((t.tm_mon) % 7 % 2);
+  int isLeapYear = (tn->tm_year%4 == 0)?1:0;
+  int daysInMonth = (tn->tm_mon + 1 == 2) ? (28 + isLeapYear) : 31 - ((tn->tm_mon) % 7 % 2);
   
-  month = t.tm_mday;
+  month = tn->tm_mday;
   month = ((double)100/daysInMonth)*month; //Percent of month
 
   //Week
   float week;
-  int hour; 
+  //int the_hour; 
   int week_percent;
   
-  week = t.tm_wday;
-  week = week*24 + t.tm_hour;
+  week = tn->tm_wday;
+  week = week*24 + tn->tm_hour;
   week = ((double)100/(7*24))*week; //Percent of Week
 
   //Day
   float day;
   int day_percent;
   
-  day = t.tm_hour;
-  day = day*60 + t.tm_min;
+  day = tn->tm_hour;
+  day = day*60 + tn->tm_min;
   day = ((double)100/(24*60))*day; //Percent of year
-
-
 
 
   //% of progress bar
@@ -103,94 +93,32 @@ void progress_update_callback(Layer *me, GContext* ctx) {
   year = ((double)134/100)*year; //Percent of bar based on % of year
   year_percent = (int)year;
 
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 25, year_percent, 5), 0, GCornerNone);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, GRect(5, 25, year_percent, 5), 0, GCornerNone);
 
   //Month
   month = ((double)134/100)*month; //Percent of bar based on % of month
   month_percent = (int)month;
 
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 56, month_percent, 5), 0, GCornerNone);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, GRect(5, 56, month_percent, 5), 0, GCornerNone);
 
   //Week
   week = ((double)134/100)*week; //Percent of bar based on % of year
   week_percent = (int)week;
 
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 87, week_percent, 5), 0, GCornerNone);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, GRect(5, 87, week_percent, 5), 0, GCornerNone);
 
   //Day
   day = ((double)134/100)*day; //Percent of bar based on % of year
   day_percent = (int)day;
 
-  graphics_context_set_fill_color(app_get_current_graphics_context(), GColorWhite);
-  graphics_fill_rect(app_get_current_graphics_context(), GRect(5, 118, day_percent, 5), 0, GCornerNone);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, GRect(5, 118, day_percent, 5), 0, GCornerNone);
 }
 
-
-void handle_init(AppContextRef ctx) {
-  (void)ctx;
-
-  window_init(&window, "Window Name");
-  window_stack_push(&window, true /* Animated */);
-  window_set_background_color(&window, GColorBlack);
-
-  //Texts
-    //Year
-    text_layer_init(&year_layer, GRect(8, 7, 144-16, 7+12));
-    text_layer_set_text_color(&year_layer, GColorWhite);
-    text_layer_set_background_color(&year_layer, GColorClear);
-    text_layer_set_font(&year_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-    text_layer_set_text(&year_layer, "Year");
-    layer_add_child(&window.layer, &year_layer.layer);
-
-    //Month
-    text_layer_init(&month_layer, GRect(8, 38, 144-16, 38+12));
-    text_layer_set_text_color(&month_layer, GColorWhite);
-    text_layer_set_background_color(&month_layer, GColorClear);
-    text_layer_set_font(&month_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-    text_layer_set_text(&month_layer, "Month");
-    layer_add_child(&window.layer, &month_layer.layer);
-
-    //Week
-    text_layer_init(&week_layer, GRect(8, 69, 144-16, 69+12));
-    text_layer_set_text_color(&week_layer, GColorWhite);
-    text_layer_set_background_color(&week_layer, GColorClear);
-    text_layer_set_font(&week_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-    text_layer_set_text(&week_layer, "Week");
-    layer_add_child(&window.layer, &week_layer.layer);
-
-    //Day
-    text_layer_init(&day_layer, GRect(8, 100, 144-16, 100+12));
-    text_layer_set_text_color(&day_layer, GColorWhite);
-    text_layer_set_background_color(&day_layer, GColorClear);
-    text_layer_set_font(&day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-    text_layer_set_text(&day_layer, "Day");
-    layer_add_child(&window.layer, &day_layer.layer);
-
-  //Clock text
-  text_layer_init(&text_time_layer, GRect(0, 127, 144, 127+26));
-  text_layer_set_text_color(&text_time_layer, GColorWhite);
-  text_layer_set_background_color(&text_time_layer, GColorClear);
-  text_layer_set_font(&text_time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-  text_layer_set_text_alignment(&text_time_layer, GTextAlignmentCenter);
-  text_layer_set_text(&text_time_layer, "00:00");
-  layer_add_child(&window.layer, &text_time_layer.layer);
-
-
-  layer_init(&bars_layer, window.layer.frame);
-  bars_layer.update_proc = &bars_update_callback;
-  layer_add_child(&window.layer, &bars_layer);
-
-  layer_init(&main_layer, window.layer.frame);
-  main_layer.update_proc = &progress_update_callback;
-  layer_add_child(&window.layer, &main_layer);
-}
-
-
-void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
-  (void)ctx;
+void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 
   static char time_text[] = "00:00";
   char *time_format;
@@ -202,28 +130,113 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
     time_format = "%I:%M";
   }
 
-  string_format_time(time_text, sizeof(time_text), time_format, t->tick_time);
+ 
+  strftime(time_text, sizeof(time_text), time_format, tick_time);
 
   if (!clock_is_24h_style() && (time_text[0] == '0')) {
     memmove(time_text, &time_text[1], sizeof(time_text) - 1);
   }
 
-  text_layer_set_text(&text_time_layer, time_text);
+  text_layer_set_text(text_time_layer, time_text);
 
   //Redraw layer
-  layer_mark_dirty(&main_layer);
+  layer_mark_dirty(main_layer);
 }
 
 
-void pbl_main(void *params) {
-  PebbleAppHandlers handlers = {
-    .init_handler = &handle_init,
+static void handle_init(void) {
 
-    .tick_info = {
-      .tick_handler = &handle_minute_tick,
-      .tick_units = MINUTE_UNIT
-    }
+  window = window_create();
+  window_stack_push(window, true /* Animated */);
+  window_set_background_color(window, GColorBlack);
 
-  };
-  app_event_loop(params, &handlers);
+	  window_layer = window_get_root_layer(window);
+  //Texts
+    //Year
+    year_layer = text_layer_create(GRect(8, 7, 144-16, 7+12));
+    text_layer_set_text_color(year_layer, GColorWhite);
+    text_layer_set_background_color(year_layer, GColorClear);
+    text_layer_set_font(year_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(year_layer, "Year");
+    layer_add_child(window_layer, text_layer_get_layer(year_layer));
+
+    //Month
+    month_layer = text_layer_create(GRect(8, 38, 144-16, 38+12));
+    text_layer_set_text_color(month_layer, GColorWhite);
+    text_layer_set_background_color(month_layer, GColorClear);
+    text_layer_set_font(month_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(month_layer, "Month");
+    layer_add_child(window_layer, text_layer_get_layer(month_layer));
+
+    //Week
+    week_layer = text_layer_create(GRect(8, 69, 144-16, 69+12));
+    text_layer_set_text_color(week_layer, GColorWhite);
+    text_layer_set_background_color(week_layer, GColorClear);
+    text_layer_set_font(week_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(week_layer, "Week");
+    layer_add_child(window_layer, text_layer_get_layer(week_layer));
+
+    //Day
+    day_layer = text_layer_create(GRect(8, 100, 144-16, 100+12));
+    text_layer_set_text_color(day_layer, GColorWhite);
+    text_layer_set_background_color(day_layer, GColorClear);
+    text_layer_set_font(day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(day_layer, "Day");
+    layer_add_child(window_layer, text_layer_get_layer(day_layer));
+
+  //Clock text
+  text_time_layer = text_layer_create(GRect(0, 127, 144, 127+26));
+  text_layer_set_text_color(text_time_layer, GColorWhite);
+  text_layer_set_background_color(text_time_layer, GColorClear);
+  text_layer_set_font(text_time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_text_alignment(text_time_layer, GTextAlignmentCenter);
+  text_layer_set_text(text_time_layer, "00:00");
+  layer_add_child(window_layer, text_layer_get_layer(text_time_layer));
+
+
+  bars_layer = layer_create(layer_get_frame(window_layer));
+  layer_set_update_proc(bars_layer, bars_update_callback);
+  layer_add_child(window_layer, bars_layer);
+
+  main_layer = layer_create(layer_get_frame(window_layer));
+  layer_set_update_proc(main_layer, progress_update_callback);
+  layer_add_child(window_layer, main_layer);
+	
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
+}
+
+
+static void handle_destroy(void) {
+  //Texts
+    //Year
+    text_layer_destroy(year_layer);
+
+    //Month
+    text_layer_destroy(month_layer);
+
+    //Week
+    text_layer_destroy(week_layer);
+
+    //Day
+    text_layer_destroy(day_layer);
+
+  //Clock text
+  text_layer_destroy(text_time_layer);
+  
+  layer_destroy(bars_layer);
+  
+  layer_destroy(main_layer);
+  tick_timer_service_unsubscribe();
+  layer_destroy(window_layer);
+	
+  window_destroy(window);
+}
+
+
+int main(void) {
+   handle_init();
+
+   app_event_loop();
+	
+   handle_destroy();
 }
